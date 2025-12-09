@@ -30,8 +30,7 @@ pip install -r requirements.txt
 ```
 
 #### 1. Download models:
-Please download the LLM from Huggingfacce at this link:[Qwen2.5-7B](https://huggingface.co/Qwen/Qwen2.5-7B).
-Please download the Bert model from Huggingfacce at this link:[bert-base-uncased](https://huggingface.co/google-bert/bert-base-uncased)
+Please download the LLM and Bert model from Huggingface at this link:[Qwen2.5-7B](https://huggingface.co/Qwen/Qwen2.5-7B) ,[bert-base-uncased](https://huggingface.co/google-bert/bert-base-uncased)
 
 #### 2. Data Process:
 ```shell
