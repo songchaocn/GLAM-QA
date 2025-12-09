@@ -24,25 +24,6 @@ def get_optimizer(optim):
 
     return optimizer
    
-def create_dataloader(dataset, train_ratio=0.6, valid_ratio=0.2, test_ratio=0.2):
-       
-        assert train_ratio + valid_ratio + test_ratio == 1, 
-
-        num_samples = len(dataset)
-        indices = list(range(num_samples))
-
-        seed = 42
-        random.seed(seed)
-        random.shuffle(indices)
-
-        train_end = int(train_ratio * num_samples)
-        valid_end = int((train_ratio + valid_ratio) * num_samples)
-
-        train_indices = indices[:train_end]
-        valid_indices = indices[train_end:valid_end]
-        test_indices = indices[valid_end:]
-
-        return train_indices, valid_indices, test_indices
 
 def create_optimizer_and_scheduler(args,first_model, model, train_loader):
     #no_decay = ["bias", "LayerNorm.weight"]
