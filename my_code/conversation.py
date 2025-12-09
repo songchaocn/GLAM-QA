@@ -276,17 +276,7 @@ conv_vicuna_v1_1 = Conversation(
     sep2="</s>",
 )
 
-# conv_qwen2_5_7b = Conversation(
-#     system="A chat between a curious user and an artificial intelligence assistant. "
-#            "The assistant gives helpful, detailed, and polite answers to the user's questions.",
-#     roles=("User", "Assistant"),
-#     messages=(),
-#     offset=0,
-#     sep_style=SeparatorStyle.TWO,
-#     sep=" ",
-#     sep2="<|endoftext|>",
-#     version="Qwen2.5-7B"
-# )
+
 conv_qwen2_5_7b = Conversation(
     system="A chat between a curious user and an artificial intelligence assistant. "
            "Your task is to generate a clear and accurate answer to the question using the structured data provided.",
@@ -437,21 +427,8 @@ conv_llama3 = Conversation(
     sep="",
 )
 
-# # 定义Qwen3的对话模板
-# conv_qwen3 = Conversation(
-#     system="""<|im_start|>system
-# - You are a helpful language and vision assistant.
-# - You are able to understand the visual content that the user provides, and assist the user with a variety of tasks using natural language.
-# - You should follow the instructions carefully and explain your answers in detail.""",
-#     roles=("<|im_start|>user\n", "<|im_start|>assistant\n<think>\n\n</think>\n\n"),
-#     version="mpt",
-#     messages=(),
-#     offset=0,
-#     sep_style=SeparatorStyle.MPT,
-#     # sep=" ",
-#     sep="<|im_end|>",
-# )
-# 定义Qwen3的对话模板
+
+# Qwen3
 conv_qwen3 = Conversation(
     system="""<|im_start|>system
 - You are a helpful language assistant.
@@ -487,8 +464,8 @@ conv_templates = {
     "vicuna_v1_1": conv_vicuna_v1_1,
     "mpt": conv_mpt,
     "mpt_text": conv_mpt_text,
-    "qwen3": conv_qwen3,  # 添加Qwen模板
-    "qwen2.5_7b": conv_qwen2_5_7b,  # 添加Qwen模板
+    "qwen3": conv_qwen3,  
+    "qwen2.5_7b": conv_qwen2_5_7b,  
 }
 
 
