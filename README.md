@@ -2,8 +2,11 @@
 
 Official implementation of the paper "A Concise GNN-LLM Alignment Framework for Knowledge-Enhanced Medical Question Answering" (accepted by BIBM 2025 workshop).
 
+## Overview
 
+<img src="doc/de40b4a3b5a4d236247d9a5a67144a44_720.png" width="90%">
 
+## Overview
 
 #### 0. Environment Setup: 
 ```shell
@@ -84,12 +87,12 @@ python eval.py
     └── my_dataloader.py
     └── my_nlp.py
     └── trainer_base.py
-
+```
 
 # Citation
 If you find this project helpful, please cite the following paper:
 ```bibtex
-@inproceedings{song2025csog,
+@inproceedings{song2025glam_qa,
   title={A Concise GNN-LLM Alignment Framework for Knowledge-Enhanced Medical Question Answering},
   author={Chao Song, Xuyi Chen, Hao Zhang, Ruilin Hu, and Weibo Liang},
   booktitle={Proceedings of the IEEE International Conference on Bioinformatics and Biomedicine (BIBM)},
