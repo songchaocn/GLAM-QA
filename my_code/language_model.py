@@ -24,7 +24,7 @@ class InstructGLM2(AutoModelForCausalLM):
         output_attentions= None,
         output_hidden_states= None,
         return_dict= None,
-        **kwargs  # 接收所有额外参数
+        **kwargs  # 
     ):
         
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
