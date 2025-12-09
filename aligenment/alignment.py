@@ -21,19 +21,14 @@ glam_qa_dir = os.path.dirname(os.path.dirname(current_file_path))
 sys.path.insert(0, glam_qa_dir)
 
 from my_code import sampler, layers, my_config, conversation, language_model, graph_transformer
-from my_code.my_config import *                                    # 原 from my_config import *
+from my_code.my_config import *                                    
 from my_code.my_dataloader import CustomDataset,my_collate_fn
 from my_code.trainer_base import create_optimizer_and_scheduler
 from my_code.language_model import InstructGLM2
-# from my_code.conversation import conv_templates, SeparatorStyle
 from my_code.graph_transformer import GraphEncoder2
 from my_code.my_nlp import *
 
-# ======================
-# 定义 train / test
-# ======================
 
-# def train(first_model, llm, train_loader, optimizer, warmup_scheduler, accelerator, epoch, data_cls, args, device,save_path,image_hidden_file):
 def train(first_model, llm, train_loader, optimizer, warmup_scheduler, accelerator, epoch, device):
     # save_path = save_path
     total_loss = 0
@@ -61,10 +56,6 @@ def train(first_model, llm, train_loader, optimizer, warmup_scheduler, accelerat
 
         attention_mask = attention_mask.to(device)
         labels = labels.to(device)
-
-        # print("inputs_embeds shape:", embeds.shape)
-        # print("attention_mask shape:", attention_mask.shape)
-        # print("labels shape:", labels.shape)
         
         output = llm(inputs_embeds=embeds, attention_mask=attention_mask, labels=labels)
         loss = output['loss']
@@ -80,7 +71,7 @@ def train(first_model, llm, train_loader, optimizer, warmup_scheduler, accelerat
         
         total_loss += batch_loss
 
-        # 使用 accelerator 进行梯度累积和反向传播
+
         accelerator.backward(loss)
         if accelerator.sync_gradients:
             # accelerator.clip_grad_norm_(first_model.parameters(), args.clip_grad_norm)
@@ -92,9 +83,6 @@ def train(first_model, llm, train_loader, optimizer, warmup_scheduler, accelerat
     avg_loss = total_loss / len(train_loader)
     accelerator.print(f"Epoch {epoch+1} | Average Train Loss: {avg_loss:.4f}")
 
-    # 保存模型
-    # if accelerator.is_main_process:
-    #     accelerator.save(accelerator.unwrap_model(first_model).state_dict(), save_path)
 
 
 
@@ -109,13 +97,12 @@ def test(first_model, llm, test_loader, tokenizer, accelerator, device,test_save
         graph = batch_data.to(device)
         input_ids = batch_data['input_ids']
         is_node = batch_data['is_node']
-        # labels = batch_data["target_ids"]
         attention_mask = batch_data['attention_mask']
         
         is_node = is_node.to(device)
         input_ids = input_ids.to(device)
 
-        # try:
+
         embeds = first_model(
             input_ids=input_ids,
             is_node=is_node,
@@ -137,7 +124,7 @@ def test(first_model, llm, test_loader, tokenizer, accelerator, device,test_save
         results_gathered = accelerator.gather(results).cpu().numpy()
 
 
-        # 解码
+
         pred_texts = tokenizer.batch_decode(results_gathered, skip_special_tokens=True)
         for bid, pred in zip(batch_ID, pred_texts):
             all_results.append({
@@ -145,27 +132,20 @@ def test(first_model, llm, test_loader, tokenizer, accelerator, device,test_save
                 "generated_text": pred
             })
 
-    # === 保存结果 ===
     if accelerator.is_main_process:
-        # save_folder = f'../saved_output/{data_cls}/naive/output_json'
-        # os.makedirs(save_folder, exist_ok=True)
-        # save_path = os.path.join(save_folder, f'test_pred_epoch{epoch or "final"}_m.json')
         save_path = test_save_path
         with open(save_path, 'w', encoding='utf-8') as f:
             json.dump(all_results, f, ensure_ascii=False, indent=4)
-        accelerator.print(f"[✅] 测试结果已保存到: {save_path}")
+        accelerator.print(f"[✅] results saved to: {save_path}")
 
     return all_results
 
-# ======================
-# 主程序入口
-# ======================
+
 
 def main():
-    ########################融合
+
     args = parse_args()
 
-    # Accelerator 初始化
     init_kwargs = InitProcessGroupKwargs(timeout=timedelta(seconds=7200))
     ddp_kwargs = DistributedDataParallelKwargs(find_unused_parameters=False)
     accelerator = Accelerator(
@@ -178,10 +158,8 @@ def main():
     data_cls = 'PubMedQA'####MedQA-en,MedMCQA,PubMedQA
     model_path = 'your_path/llm/Qwen2.5-7B'
     
-    ################################################image feature memmap load##clip_data/
-     ################################################ ################################################
 
-    # # ===== 数据加载 =====
+
     train_dataset = CustomDataset(root=f'../Data/ultra/{data_cls}/train_qa_qwen2.5_7b')
     test_dataset = CustomDataset(root=f'../Data/ultra/{data_cls}/test_qa_qwen2.5_7b')
 
@@ -191,8 +169,6 @@ def main():
 
     
 
-    
-    # ===== 模型初始化 =====
     llm = InstructGLM2.from_pretrained(model_path, torch_dtype=torch.bfloat16, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(model_path)
     tokenizer.add_special_tokens({'unk_token': '<unk>'})
@@ -220,9 +196,7 @@ def main():
         first_model, llm, train_loader, optimizer, warmup_scheduler
     )
 
-    # ======= 训练 + 验证 =======
     date_flag = time.strftime("%m%d", time.localtime())
-    # best_val_loss = float('inf')
     best_model_path = None
     num_epochs = 3
     for epoch in range(num_epochs):
@@ -239,10 +213,8 @@ def main():
 
     accelerator.wait_for_everyone()
 
-    # ======= 测试 =======
-    accelerator.print("\n开始测试阶段...")
+    accelerator.print("\n start testing...")
     test_model = GraphEncoder2(args, device, llama_embed=llama_embeds).to(device, dtype=torch.bfloat16)
-    # ckpt_path = f'../saved_output/{data_cls}/fusion/ckpt/first_model_epoch{num_epochs}_clip_test3.pth'
     ckpt_path = best_model_path
     test_model.load_state_dict(torch.load(ckpt_path, map_location=device))
     test_model, llm, test_loader = accelerator.prepare(test_model, llm, test_loader)
@@ -269,6 +241,6 @@ if __name__ == "__main__":
     main()
     elapsed = time.time() - start_time
     h, m, s = int(elapsed // 3600), int((elapsed % 3600) // 60), int(elapsed % 60)
-    print(f"⏱ 总耗时: {h}h {m}m {s}s")
+    print(f"⏱ Total time: {h}h {m}m {s}s")
     
     
