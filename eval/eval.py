@@ -86,7 +86,7 @@ data_cls = 'PubMedQA'####MedQA-en,MedMCQA,PubMedQA
 date_flag = time.strftime("%m%d", time.localtime())
 
 def truncate_text(text, max_length=512):
-    """截断文本到最大长度"""
+
     tokens = tokenizer.tokenize(text)
     if len(tokens) > max_length - 2:  #
         tokens = tokens[:max_length - 2]
