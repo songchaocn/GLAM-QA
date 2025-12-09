@@ -1,4 +1,3 @@
-#####################################################get_triples new
 
 import os
 import json
@@ -8,16 +7,12 @@ import pandas as pd
 from tqdm import tqdm
 import os
 import torch
-##1.get_triples new
+
 
 def get_csv_num(path):
-        # 定义目录路径
+
         directory_path = path
-
-        # 获取目录下的所有文件和子目录名
         files_and_dirs = os.listdir(directory_path)
-
-        # 计算CSV文件的数量
         csv_files_count = sum(file.endswith('.csv') for file in files_and_dirs if os.path.isfile(os.path.join(directory_path, file)))
         return csv_files_count
 
@@ -38,7 +33,6 @@ def get_t_graph(in_path,out_path):
                 if any(entity in triple_j for entity in triple_i):
                     connections.append((i, j))
 
-        # 将连接关系写入新的CSV文件
         with open(out_path, 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file, delimiter=';')
             writer.writerow(['src', 'dst'])
@@ -51,14 +45,14 @@ data_cls = 'PubMedQA'##MedQA-en,MedMCQA,PubMedQA
 
 stage_list = ['train','test']
 for flag_tail in stage_list:
-    print(f'正在处理 {flag_tail} 集合...')
-    # 1. 路径
+    print(f'Processing {flag_tail} set...')
+
     json_file   = f'../data/{data_cls}/qa_data/q2tri_{flag_tail}.json'  
-    out_dir     = f'../data/{data_cls}/triples/{flag_tail}'   # 保存 0.csv 1.csv ... 的文件夹
+    out_dir     = f'../data/{data_cls}/triples/{flag_tail}'   
     os.makedirs(out_dir, exist_ok=True)
 
 
-    # 3. 加载 json
+
     with open(json_file, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
@@ -79,9 +73,8 @@ for flag_tail in stage_list:
                     writer.writerow([head, relation, tail])
                         
         except Exception as e:
-            print(f"写入文件时出现错误: {e},{csv_file}")  
-    print('全部写完，保存在', out_dir)
-    # # ##########get all triples
+            print(f"Error writing file: {e},{csv_file}")  
+    print('All files written and saved to', out_dir)
     with open(f'../data/{data_cls}/qa_data/q2tri.json', 'r', encoding='utf-8') as file:
         all_data = json.load(file)
 
@@ -89,7 +82,6 @@ for flag_tail in stage_list:
     for i in range(len(all_data)):
         question = all_data[i]['question']
         triples_list = all_data[i]['triples']
-        # unique_triples_list = [list(t) for t in {tuple(row) for row in triples_list}]
         total_list.extend(triples_list)
         
     unique_triples_list = [list(t) for t in {tuple(row) for row in total_list}]
@@ -98,7 +90,6 @@ for flag_tail in stage_list:
     try:
         with open(csv_file, mode='w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file, delimiter=';')
-            # 写入表头
             writer.writerow(['head', 'relation', 'tail'])
             for j in range(len(unique_triples_list)):
                 head = unique_triples_list[j][0]
@@ -107,12 +98,10 @@ for flag_tail in stage_list:
                 writer.writerow([head, relation, tail])
                         
     except Exception as e:
-        print(f"写入文件时出现错误: {e},{csv_file}")  
-    print('全部写完，保存在', csv_file)
+        print(f"Error writing file: {e},{csv_file}")  
+    print('All files written and saved to', csv_file)
     
-    
-    ####3.get edge index 
-    
+
     directory_path = f'../data/{data_cls}/triples/{flag_tail}'
     csv_files_count = get_csv_num(directory_path)
 
@@ -128,32 +117,5 @@ for flag_tail in stage_list:
         get_t_graph(in_path,out_path)
     
     
-    # #2.get sub emb
-    # total_emb_path = f'../images_data/{data_cls}/medical_triples_emb.pt'#初始化还是用nomic
-    # out_dir     = f'../images_data/{data_cls}/clip_data/kg_emb/{flag_tail}'          # 保存 0.pt 1.pt ...
-    # os.makedirs(out_dir, exist_ok=True)
-
-    # # 2. 加载全部 embedding（可放 GPU，也可 CPU）
-    # total_embeddings = torch.load(total_emb_path)          # shape: (N, dim)
-    # cnt2 = 0
-    # # 3. 加载 json
-    # with open(json_file, 'r', encoding='utf-8') as f:
-    #     data = json.load(f)
-
-    # # 4. 逐 image 写出
-    # for item in tqdm(data, desc='写 pt'):
-    #     # img_id  = item['id']
-    #     img_id  = cnt2
-    #     kg_id   = item['kg_ids']               # list[int]
-    #     if len(kg_id) == 0:
-    #         # print(img_id)
-    #         continue
-    #     kg_emb  = total_embeddings[kg_id]     # (k, dim)
-
-    #     out_path = os.path.join(out_dir, f'{img_id}.pt')
-    #     torch.save(kg_emb, out_path)
-    #     cnt2 += 1
-    # print(kg_emb.shape)
-    # print('全部写完 ->', out_dir)
 
 
