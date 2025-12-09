@@ -10,24 +10,21 @@ import csv
 
 
 def get_csv_num(path):
-    # 定义目录路径
+
     directory_path = path
 
-    # 获取目录下的所有文件和子目录名
     files_and_dirs = os.listdir(directory_path)
 
-    # 计算CSV文件的数量
     csv_files_count = sum(file.endswith('.csv') for file in files_and_dirs if os.path.isfile(os.path.join(directory_path, file)))
     return csv_files_count
 
 
 def get_nodes_embedding(data1,wrt_path):
-    qa_tensors_list = []  # 使用列表来收集输出张量
+    qa_tensors_list = []  
     embeddings = OllamaEmbeddings(model="nomic-embed-text")
     white_color = '\033[37m'
     reset_color = '\033[0m'
 
-    # 自定义进度条格式，使用白色
     bar_format = "{l_bar}%s{bar}%s{r_bar}" % (white_color, reset_color)
     for i in tqdm(range(len(data1)), desc="get node", bar_format=bar_format): 
         head = str(data1.loc[i]['head'])
@@ -69,7 +66,7 @@ print(f'triples_emb saved {wrt_path}')
 stage_list = ['train','test']
 
 for flag_tail in stage_list:
-    print(f'正在处理 {flag_tail} 集合...')
+    print(f'Processing {flag_tail} set...')
 
     directory_path = f'../data/{data_cls}/triples/{flag_tail}'
     csv_files_count = get_csv_num(directory_path)
@@ -81,15 +78,15 @@ for flag_tail in stage_list:
     triple_dict = {}
     with open(f'../data/{data_cls}/triples/triples.csv', 'r', encoding='utf-8') as f_total:
         reader_total = csv.DictReader(f_total, delimiter=';')
-        for idx, row in enumerate(reader_total, start=1):  # 索引从1开始（跳过表头行）
+        for idx, row in enumerate(reader_total, start=1):  
             head = row['head'].strip()
             relation = row['relation'].strip()
             tail = row['tail'].strip()
             triple = (head, relation, tail)
-            if triple not in triple_dict:  # 避免重复三元组覆盖索引
+            if triple not in triple_dict:  
                 triple_dict[triple] = idx
 
-    # 检查0.csv中的三元组
+
     for i in range(csv_files_count):
 
         in_path = f'../data/{data_cls}/triples/{flag_tail}/{i}.csv'
@@ -119,8 +116,8 @@ for flag_tail in stage_list:
             save_path =out_folder + f"/{i}.pt"
             torch.save(test_embeddings, save_path)
     
-    print("提取的嵌入形状：", test_embeddings.shape)
+    print("shape：", test_embeddings.shape)
 
 end_time = time.time()
-elapsed_time = end_time - start_time  # 计算时间差，得到所用时间
-print(f"所用时间: {elapsed_time} 秒")
+elapsed_time = end_time - start_time  
+print(f"Total time: {elapsed_time} s")
