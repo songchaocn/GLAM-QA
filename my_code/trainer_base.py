@@ -26,14 +26,14 @@ def get_optimizer(optim):
    
 def create_dataloader(dataset, train_ratio=0.6, valid_ratio=0.2, test_ratio=0.2):
        
-        assert train_ratio + valid_ratio + test_ratio == 1, "比例之和应该为1"
+        assert train_ratio + valid_ratio + test_ratio == 1, 
 
         num_samples = len(dataset)
         indices = list(range(num_samples))
-        # 设置随机种子
+
         seed = 42
         random.seed(seed)
-        random.shuffle(indices)#打乱数据集顺序
+        random.shuffle(indices)
 
         train_end = int(train_ratio * num_samples)
         valid_end = int((train_ratio + valid_ratio) * num_samples)
@@ -64,7 +64,7 @@ def create_optimizer_and_scheduler(args,first_model, model, train_loader):
         eps=args.adam_eps,
         betas=(args.adam_beta1, args.adam_beta1)) # betas=(0.9, 0.95)
 
-    # 根据warmup配置，设置warmup
+    
     total_steps = len(train_loader) * args.epoch
     num_warmup_steps = int(total_steps * args.warmup_ratio)
     assert num_warmup_steps <= total_steps, \
