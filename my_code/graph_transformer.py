@@ -20,48 +20,6 @@ def seed_everything(seed: int):
     torch.backends.cudnn.benchmark = True
 
 
-  
-class GraphEncoder(nn.Module):    # 
-    def __init__(self, args,device, llama_embed):
-        super(GraphEncoder, self).__init__()
-        self.args = args
-        self.GT = GraphSAGE(args)
-        self.device = device
-
-        self.embed_tokens = llama_embed   # freezed Llama-7b word embeddings.
-        self.embed_dim = llama_embed.shape[1]
-
-        
-        self.graph_projector = nn.Sequential(
-            nn.Linear(args.gnn_output, self.args.num_token * self.embed_dim),
-            )
-   
-        for m in self.modules():
-            if isinstance(m, nn.LayerNorm):
-                m.weight.data.fill_(1.0)
-            elif isinstance(m, nn.Linear):
-                m.weight.data.normal_(mean=0.0, std=1.0)
-
-    def forward(self, input_ids, is_node, graph,device):
-        
-        
-        batch_size = input_ids.shape[0]
-        
-       
-        node_embedding = self.graph_projector(self.GT(graph.x, graph.edge_index, graph.batch))
-     
-        node_embeddings =  node_embedding.view(-1, self.embed_dim) # [bs * 5, dim]
-        inputs_embeds = self.embed_tokens[input_ids].to(device)
-        
-        seq_length = inputs_embeds.shape[1]
-        # print('inputs_embeds.shape:',inputs_embeds.shape)
-        is_node = is_node.view(batch_size, seq_length)
-        # print(f"input_ids shape: {input_ids.shape}, is_node shape: {is_node.shape}")
-        
-        inputs_embeds[is_node] = node_embeddings.to(inputs_embeds.dtype)
-
-        return inputs_embeds# [bsz, seq, dim]
-
 
 class GraphEncoder2(nn.Module):    #
     def __init__(self, args,device, llama_embed):
@@ -167,7 +125,7 @@ class GraphSAGE(nn.Module):
                 x = self.activation(x)
                 x = F.dropout(x, p=self.args.dropout, training=self.training)
         
-        # x = list(unbatch(x, batch))# 拆分为单图节点列表
+        # x = list(unbatch(x, batch))#
         # xs = []
         # # assert lp.shape[0] == len(x)
         # for i in range(len(x)):
@@ -175,7 +133,7 @@ class GraphSAGE(nn.Module):
         #     #     xs.append((x[i][0] + x[i][1]) / 2)
         #     # else:
         #         # xs.append(x[i][0])
-        #      xs.append(x[i][0])# 只取每个图的第一个节点(ego)
+        #      xs.append(x[i][0])#
              
         # x = t.stack(xs, dim=0)
         x = self.pool(x, batch)
@@ -220,17 +178,5 @@ class ReprogrammingLayer2(nn.Module):
         
         return self.out_projection(out)
 
-    def reprogramming(self, target_embedding, source_embedding, value_embedding):
-        B, L, H, E = target_embedding.shape
-
-        scale = 1. / sqrt(E)
-
-        scores = torch.einsum("blhe,she->bhls", target_embedding, source_embedding) * scale
-
-        A = self.dropout(torch.softmax(scores, dim=-1))
-        reprogramming_embedding = torch.einsum("bhls,she->blhe", A, value_embedding)
-
-        return reprogramming_embedding
-    
     
     
