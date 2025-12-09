@@ -29,12 +29,12 @@ class GraphSAGE(torch.nn.Module):
         #     self.convs.append(gnn_conv(in_channels, out_channels)
         
         if n_layers > 1:
-            self.convs.append(gnn_conv(in_channels, hidden_channels, edge_dim=edge_dim))  # 传递 edge_dim
+            self.convs.append(gnn_conv(in_channels, hidden_channels, edge_dim=edge_dim))  
             for i in range(1, n_layers - 1):
-                self.convs.append(gnn_conv(hidden_channels, hidden_channels, edge_dim=edge_dim))  # 传递 edge_dim
-            self.convs.append(gnn_conv(hidden_channels, out_channels, edge_dim=edge_dim))  # 传递 edge_dim
+                self.convs.append(gnn_conv(hidden_channels, hidden_channels, edge_dim=edge_dim))  
+            self.convs.append(gnn_conv(hidden_channels, out_channels, edge_dim=edge_dim))  
         else:
-            self.convs.append(gnn_conv(in_channels, out_channels, edge_dim=edge_dim))  # 传递 edge_dim
+            self.convs.append(gnn_conv(in_channels, out_channels, edge_dim=edge_dim))  
 
         # non-linear layer for contrastive loss
         self.fc1 = torch.nn.Linear(out_channels, num_proj_hidden)
