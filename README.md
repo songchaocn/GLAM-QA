@@ -6,7 +6,7 @@ Official implementation of the paper "A Concise GNN-LLM Alignment Framework for 
 
 <img src="doc/de40b4a3b5a4d236247d9a5a67144a44_720.png" width="90%">
 
-## Overview
+## Running
 
 #### 0. Environment Setup: 
 ```shell
