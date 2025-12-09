@@ -41,7 +41,7 @@ class GraphEncoder2(nn.Module):    #
         self.key = self.attention_dim // self.n_head
         
         self.mapping_layer = nn.Linear(self.vocab_size - 1, 2000)
-        self.reprogramming_layer = ReprogrammingLayer2(self.attention_dim, self.graph_dim, self.n_head, self.args.num_token, self.key, self.embed_dim)
+        self.reprogramming_layer = ReprogrammingLayer(self.attention_dim, self.graph_dim, self.n_head, self.args.num_token, self.key, self.embed_dim)
   
         for m in self.modules():
             if isinstance(m, nn.LayerNorm):
@@ -147,9 +147,9 @@ class GraphSAGE(nn.Module):
     
     
 
-class ReprogrammingLayer2(nn.Module):
+class ReprogrammingLayer(nn.Module):
     def __init__(self, attention_dim, graph_dim, n_heads,num_token,d_keys=None, llm_dim=None, attention_dropout=0.1):
-        super(ReprogrammingLayer2, self).__init__()
+        super(ReprogrammingLayer, self).__init__()
 
         d_keys = d_keys or (attention_dim // n_heads)
 
