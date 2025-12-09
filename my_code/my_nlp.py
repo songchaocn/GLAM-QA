@@ -7,7 +7,7 @@ from transformers import  GenerationConfig
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, message="TypedStorage is deprecated.")
 
-# 创建生成配置对象
+
 generation_config = GenerationConfig(
     do_sample=True,
     temperature=0.7,
