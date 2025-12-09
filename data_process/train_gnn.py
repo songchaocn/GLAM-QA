@@ -54,11 +54,11 @@ def my_collate_fn(data_list):
 
     batch_num_nodes = torch.tensor([data.num_nodes for data in data_list], dtype=torch.long)
 
-    # 生成 batch 信息 (每个节点的图索引)
+
     batch_indices = torch.cat([
         torch.full((data.num_nodes,), i, dtype=torch.long) for i, data in enumerate(data_list)
     ])
-    ptr = torch.tensor([0] + batch_num_nodes.cumsum(dim=0).tolist())  # 子图边界索引
+    ptr = torch.tensor([0] + batch_num_nodes.cumsum(dim=0).tolist())  
 
     input_ids = []
     target_ids = []
@@ -76,7 +76,7 @@ def my_collate_fn(data_list):
     batch_is_node = torch.cat(is_node, dim=0) # tensor
 
     
-    # 将所有合并后的信息打包为一个新的 Data 对象
+
     batch_data = Data(
         input_ids = batch_input_ids,
         target_ids = batch_target_ids,
@@ -198,6 +198,5 @@ if __name__ == '__main__':
     end_time = time.time()
     elapsed_time = end_time - start_time
     hours, minutes, seconds = format_time(elapsed_time)
-    print(f"所用时间: {hours}h {minutes}min {seconds}s")
-    # out = model(data.x, data.edge_index)
-    # torch.save(out, "../../data/arxiv/graphsage_node_embeddings.pt")
+    print(f"Total time: {hours}h {minutes}min {seconds}s")
+
