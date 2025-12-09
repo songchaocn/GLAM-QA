@@ -17,11 +17,9 @@ import os
 current_file_path = os.path.abspath(__file__)
 glam_qa_dir = os.path.dirname(os.path.dirname(current_file_path))
 sys.path.insert(0, glam_qa_dir)
-# sys.path.append('/mnt/cxy/cv_MRG')
 
-# ========= 所有自建模块均显式从 my_code 导入 =========
 from my_code import sampler, layers, my_config, conversation, language_model, graph_transformer
-from my_code.my_config import *                                    # 原 from my_config import *
+from my_code.my_config import *                                  
 from my_code.language_model import InstructGLM2
 from my_code.conversation import conv_templates, SeparatorStyle
 
@@ -106,7 +104,7 @@ def preprocess(prompt, gpt, tokenizer, max_length, mode='train'):
                 parts[0] += sep
                 # # "-2" is hardcoded for the Llama tokenizer to make the offset correct. the first label is not _, but _label
                 instruction_len = len(tokenizer(parts[0]).input_ids) - 2
-                # Remove the -2 operation
+   
 
                 # Ignore the user instructions
                 target[cur_len : cur_len + instruction_len] = IGNORE_TOKEN_ID
@@ -134,7 +132,7 @@ def preprocess(prompt, gpt, tokenizer, max_length, mode='train'):
 
 args = parse_args()
 llm_device = torch.device('cpu')
-device = torch.device('cuda:1')
+device = torch.device('cuda:0')
 
 model_path = 'your_path/llm/Qwen2.5-7B'
 
@@ -226,7 +224,7 @@ def mk_data(stage_name,data_cls):
         print(embeddings)
         
     except FileNotFoundError:
-        print(f"未找到文件: {save_path}")
+        print(f"File not found: {save_path}")
 
     print(f'{stage_name} cnt:{cnt}')
     
