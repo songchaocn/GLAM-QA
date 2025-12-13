@@ -6,7 +6,7 @@ Official implementation of the paper "A Concise GNN-LLM Alignment Framework for 
 
 ## Overview
     GLAM-QA involves three key stages: First, the graph neural network is trained in a self-supervised manner via a link prediction task. Second, the LLM is leveraged to identify key entities in the question, and 1-hop/2-hop triples are retrieved from the knowledge graph to construct a graph of triples accordingly. Finally, guided by the instructions of open domain QA tasks and combined with the vocabulary token embeddings of the LLM, the cross-attention mechanism and linear projector are trained. During the cross-attention process,the graph representations are thoroughly learned to capture the prior knowledge encoded in the LLM, and are ultimately mapped into the embedding vectors of multiple graph tokens via the linear projector.
-
+    
 <img src="doc/de40b4a3b5a4d236247d9a5a67144a44_720.png" width="90%">
 
 ## Running
