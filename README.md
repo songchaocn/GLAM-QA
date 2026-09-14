@@ -2,8 +2,7 @@
 
 [![Paper](https://img.shields.io/badge/Paper-BIBM25-blue)](https://arxiv.org/abs/xxx.xxxx) [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/) [![PyTorch](https://img.shields.io/badge/PyTorch-2.10%2B-orange.svg)](https://pytorch.org/)
 
-Official implementation of the paper ：
-Chao Song, Xuyi Chen, Hao Zhang, Ruilin Hu, and Weibo Liang*. A Concise GNN-LLM Alignment Framework for Knowledge-Enhanced Medical Question Answering. Proceedings of IEEE International Conference on Bioinformatics and Biomedicine (BIBM), 15-18 December 2025, Wuhan, China. DOI: 10.1109/BIBM66473.2025.11356379
+Official implementation of the paper "Chao Song, Xuyi Chen, Hao Zhang, Ruilin Hu, and Weibo Liang*. A Concise GNN-LLM Alignment Framework for Knowledge-Enhanced Medical Question Answering. Proceedings of IEEE International Conference on Bioinformatics and Biomedicine (BIBM), 15-18 December 2025, Wuhan, China. DOI: 10.1109/BIBM66473.2025.11356379"
 
 ## Overview
 GLAM-QA involves three key stages: First, the graph neural network is trained in a self-supervised manner via a link prediction task. Second, the LLM is leveraged to identify key entities in the question, and 1-hop/2-hop triples are retrieved from the knowledge graph to construct a graph of triples accordingly. Finally, guided by the instructions of open domain QA tasks and combined with the vocabulary token embeddings of the LLM, the cross-attention mechanism and linear projector are trained. During the cross-attention process,the graph representations are thoroughly learned to capture the prior knowledge encoded in the LLM, and are ultimately mapped into the embedding vectors of multiple graph tokens via the linear projector.
